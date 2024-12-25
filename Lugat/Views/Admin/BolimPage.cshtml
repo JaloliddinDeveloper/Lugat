@@ -1,0 +1,144 @@
+﻿@using Lugat.Models.Foundations.Bolims
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model IEnumerable<Bolim>
+
+@{
+    ViewData["Title"] = "Bo'limlar";
+}
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f7fc;
+        margin: 0;
+        padding: 0;
+    }
+
+    h2 {
+        color: #343a40;
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+    .btn-warning {
+        background-color: #ffc107;
+        color: white;
+    }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+
+    .table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table th {
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+        }
+
+        .table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .table tbody tr:last-child {
+            border-bottom: 2px solid #007bff;
+        }
+
+    .table-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .back-btn {
+        display: inline-block;
+        background-color: #6c757d;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        margin-bottom: 20px;
+        text-decoration: none;
+    }
+
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+</style>
+
+<h2>@ViewBag.CategoryName</h2>
+
+<a asp-controller="Admin" asp-action="Index" class="back-btn">Orqaga</a>
+
+<div class="table-container">
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Bo'lim Nomi</th>
+                    <th>Star</th>
+                    <th>Amallar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var bolim in Model)
+                {
+                    <tr>
+                        <td>@bolim.Id</td>
+                        <td>@bolim.Name</td>
+                        <td>@bolim.Star</td>
+                        <td>
+                            <a asp-controller="Admin" asp-action="UpdateBolim" asp-route-id="@bolim.Id" class="btn btn-warning">Tahrirlash</a>
+                            <a asp-controller="Admin" asp-action="DeleteBolim" asp-route-id="@bolim.Id" class="btn btn-danger">O'chirish</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
