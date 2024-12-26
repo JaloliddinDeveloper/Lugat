@@ -1,0 +1,23 @@
+﻿@using Lugat.Models.Foundations.Words
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Word
+
+<h2>Delete Word</h2>
+
+<p>Are you sure you want to delete this word?</p>
+
+<div class="card">
+    <div class="card-body">
+        <p><strong>English:</strong> @Model.English</p>
+        <p><strong>English Translation:</strong> @Model.EnglishTrans</p>
+        <p><strong>Uzbek:</strong> @Model.Uzbek</p>
+        <p><strong>Example in English:</strong> @Model.ExampleEng</p>
+        <p><strong>Example in Uzbek:</strong> @Model.ExampleUz</p>
+    </div>
+</div>
+
+<form asp-action="DeleteWord" asp-controller="Admin" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" asp-controller="Admin" class="btn btn-secondary">Cancel</a>
+</form>

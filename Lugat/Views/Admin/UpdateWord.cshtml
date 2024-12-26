@@ -1,0 +1,166 @@
+﻿@using Lugat.Models.Foundations.Words
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Word
+
+<h2 class="form-title">Update Word</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+
+<div class="form-container">
+    <form asp-action="UpdateWord" asp-controller="Admin" method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="form-group-modern">
+            <label asp-for="English">English</label>
+            <input asp-for="English" class="form-control-modern" />
+            <span asp-validation-for="English" class="text-danger"></span>
+        </div>
+
+        <div class="form-group-modern">
+            <label asp-for="EnglishTrans">English Translation</label>
+            <input asp-for="EnglishTrans" class="form-control-modern" />
+            <span asp-validation-for="EnglishTrans" class="text-danger"></span>
+        </div>
+
+        <div class="form-group-modern">
+            <label asp-for="Uzbek">Uzbek</label>
+            <input asp-for="Uzbek" class="form-control-modern" />
+            <span asp-validation-for="Uzbek" class="text-danger"></span>
+        </div>
+
+        <div class="form-group-modern">
+            <label asp-for="ExampleEng">Example in English</label>
+            <input asp-for="ExampleEng" class="form-control-modern" />
+            <span asp-validation-for="ExampleEng" class="text-danger"></span>
+        </div>
+
+        <div class="form-group-modern">
+            <label asp-for="ExampleUz">Example in Uzbek</label>
+            <input asp-for="ExampleUz" class="form-control-modern" />
+            <span asp-validation-for="ExampleUz" class="text-danger"></span>
+        </div>
+
+        <div class="form-group-modern">
+            <label asp-for="WordPicture">Word Picture (URL or Path)</label>
+            <input asp-for="WordPicture" class="form-control-modern" />
+            <span asp-validation-for="WordPicture" class="text-danger"></span>
+        </div>
+
+        <div class="form-group-modern">
+            <label asp-for="BolimId">Bolim ID</label>
+            <input asp-for="BolimId" class="form-control-modern" />
+            <span asp-validation-for="BolimId" class="text-danger"></span>
+        </div>
+
+        <div class="button-container">
+            <button type="submit" class="btn-modern btn-primary">Save Changes</button>
+            <a asp-action="Index" asp-controller="Admin" class="btn-modern btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 0;
+    }
+
+    .form-title {
+        text-align: center;
+        font-size: 2rem;
+        color: #333;
+        margin-top: 20px;
+    }
+
+    .form-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    .form-group-modern {
+        margin-bottom: 20px;
+    }
+
+        .form-group-modern label {
+            display: block;
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+    .form-control-modern {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        outline: none;
+        transition: border-color 0.3s ease-in-out;
+    }
+
+        .form-control-modern:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+    .button-container {
+        text-align: center;
+    }
+
+    .btn-modern {
+        padding: 10px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: #fff;
+        margin-left: 10px;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+    .alert {
+        margin-bottom: 20px;
+        padding: 15px;
+        color: #155724;
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        border-radius: 5px;
+    }
+
+    .text-danger {
+        font-size: 0.8rem;
+        color: #dc3545;
+    }
+</style>
