@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lugat.Controllers
 {
-    public class AdminController : Controller
+    public  class AdminController : Controller
     {
         private readonly IStorageBroker storageBroker;
         private readonly ICategoryService categoryService;
@@ -182,5 +182,49 @@ namespace Lugat.Controllers
             return RedirectToAction(nameof(Index)); 
         }
 
+        public async Task<IActionResult> UpdateBolim(int id)
+        {
+            var bolim = await this.bolimService.RetrieveBolimByIdAsync(id);
+
+            if (bolim == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["CategoryId"] = bolim.CategoryId;
+
+            return View(bolim);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateBolim(Bolim bolim)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(bolim);
+            }
+
+            try
+            {
+                var existingBolim = await this.bolimService.RetrieveBolimByIdAsync(bolim.Id);
+                if (existingBolim == null)
+                {
+                    return NotFound();
+                }
+
+                existingBolim.Name = bolim.Name;
+                existingBolim.SectionPicture = bolim.SectionPicture;
+                existingBolim.Star = bolim.Star;
+                existingBolim.CategoryId = bolim.CategoryId;
+
+                await this.bolimService.UpdateBolimAsync(existingBolim);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Xatolik yuz berdi: {ex.Message}");
+                return View(bolim);
+            }
+        }
     }
 }

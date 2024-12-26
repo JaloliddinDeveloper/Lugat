@@ -3,7 +3,6 @@
 // Free To Use To Find Comfort And Peace
 //--------------------------------------------------
 using Microsoft.EntityFrameworkCore;
-using Lugat.Models.Foundations.Categories;
 
 namespace Lugat.Brokers.Storages
 {
