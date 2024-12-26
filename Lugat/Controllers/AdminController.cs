@@ -278,5 +278,71 @@ namespace Lugat.Controllers
 
             return View("AddWord", word);
         }
+
+        public async Task<IActionResult> UpdateWord(int id)
+        {
+            var word = await this.wordService.RetrieveWordByIdAsync(id);
+            if (word == null)
+            {
+                return NotFound();
+            }
+
+            return View(word);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateWord(Word word)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(word);
+            }
+
+            var existingWord = await this.wordService.RetrieveWordByIdAsync(word.Id);
+            if (existingWord == null)
+            {
+                return NotFound();
+            }
+
+            existingWord.English = word.English;
+            existingWord.EnglishTrans = word.EnglishTrans;
+            existingWord.Uzbek = word.Uzbek;
+            existingWord.ExampleEng = word.ExampleEng;
+            existingWord.ExampleUz = word.ExampleUz;
+            existingWord.WordPicture = word.WordPicture; 
+            existingWord.BolimId = word.BolimId;
+
+
+            await this.wordService.UpdateWordAsync(existingWord);
+
+            TempData["Message"] = "Word updated successfully!";
+            return RedirectToAction("Index");
+        }
+
+
+
+        public async Task<IActionResult> DeleteWord(int id)
+        {
+            var word = await this.wordService.RetrieveWordByIdAsync(id);
+            if (word == null)
+            {
+                return NotFound();
+            }
+
+            return View(word); 
+        }
+
+        [HttpPost, ActionName("DeleteWord")]
+        public async Task<IActionResult> DeleteWordConfirmed(int id)
+        {
+            var word = await this.wordService.RetrieveWordByIdAsync(id);
+            if (word == null)
+            {
+                return NotFound();
+            }
+
+          await this.wordService.RemoveWordByIdAsync(word.Id);
+            return RedirectToAction("Index"); // Redirect to your list view
+        }
     }
 }
