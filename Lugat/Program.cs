@@ -1,3 +1,7 @@
+//--------------------------------------------------
+// Copyright (c) Coalition Of Good-Hearted Engineers
+// Free To Use To Find Comfort And Peace
+//--------------------------------------------------
 using Lugat.Brokers.Storages;
 using Lugat.Services.Foundations.Bolimlar;
 using Lugat.Services.Foundations.Categories;
