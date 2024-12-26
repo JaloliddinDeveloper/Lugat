@@ -3,7 +3,6 @@
 // Free To Use To Find Comfort And Peace
 //--------------------------------------------------
 using Lugat.Models.Foundations.Words;
-using System.Text.Json.Serialization;
 
 namespace Lugat.Models.Foundations.Bolims
 {

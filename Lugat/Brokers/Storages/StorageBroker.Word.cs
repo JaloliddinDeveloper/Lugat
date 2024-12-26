@@ -4,6 +4,7 @@
 //--------------------------------------------------
 using Microsoft.EntityFrameworkCore;
 using Lugat.Models.Foundations.Words;
+using Lugat.Models.Foundations.Bolims;
 
 namespace Lugat.Brokers.Storages
 {
@@ -25,5 +26,12 @@ namespace Lugat.Brokers.Storages
 
         public async ValueTask<Word> DeleteWordAsync(Word Word) =>
           await DeleteAsync(Word);
+
+        public async Task<IEnumerable<Word>> GetWordsBolimlarByIdAsync(int bolimId)
+        {
+            return await this.Words
+                .Where(b => b.BolimId == bolimId)
+                .ToListAsync();
+        }
     }
 }

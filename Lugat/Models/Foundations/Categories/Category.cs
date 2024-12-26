@@ -1,5 +1,4 @@
 ﻿using Lugat.Models.Foundations.Bolims;
-using System.Text.Json.Serialization;
 
 namespace Lugat.Models.Foundations.Categories
 {
