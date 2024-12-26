@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Lugat.Models.Foundations.Words;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Lugat.Controllers
 {

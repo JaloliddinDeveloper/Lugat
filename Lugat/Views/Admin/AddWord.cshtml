@@ -1,0 +1,147 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Lugat.Models.Foundations.Words
+@model Word
+
+@{
+    ViewData["Title"] = "Add New Word";
+}
+
+<div class="container">
+    <h2>So'z qo'shish</h2>
+
+    <form asp-action="CreateWord" method="post">
+        <div class="form-group">
+            <label for="English">English Word</label>
+            <input type="text" class="form-control" id="English" name="English" required />
+        </div>
+
+        <div class="form-group">
+            <label for="EnglishTrans">English Translation</label>
+            <input type="text" class="form-control" id="EnglishTrans" name="EnglishTrans" required />
+        </div>
+
+        <div class="form-group">
+            <label for="Uzbek">Uzbek Word</label>
+            <input type="text" class="form-control" id="Uzbek" name="Uzbek" required />
+        </div>
+
+        <div class="form-group">
+            <label for="WordPicture">Word Picture</label>
+            <input type="text" class="form-control" id="WordPicture" name="WordPicture" />
+        </div>
+
+        <div class="form-group">
+            <label for="ExampleEng">Example in English</label>
+            <input type="text" class="form-control" id="ExampleEng" name="ExampleEng" />
+        </div>
+
+        <div class="form-group">
+            <label for="ExampleUz">Example in Uzbek</label>
+            <input type="text" class="form-control" id="ExampleUz" name="ExampleUz" />
+        </div>
+
+        <input type="hidden" name="BolimId" value="@Model.BolimId" />
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-success">Qo'shish</button>
+            <a asp-action="BolimPage" asp-route-id="@Model.BolimId" class="btn btn-secondary">Bekor qilish</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    /* General page and form container */
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 30px auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Form heading */
+    h2 {
+        font-size: 1.8em;
+        color: #333;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    /* Label style */
+    label {
+        font-size: 1em;
+        color: #666;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    /* Input fields */
+    input[type="text"] {
+        width: 100%;
+        padding: 12px 15px;
+        margin: 10px 0 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1em;
+        color: #333;
+        transition: border-color 0.3s ease;
+    }
+
+        /* Focus on inputs */
+        input[type="text"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+    /* Button styling */
+    button[type="submit"] {
+        background-color: #007bff;
+        color: white;
+        padding: 12px 25px;
+        font-size: 1em;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+    /* Secondary button */
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+        padding: 12px 25px;
+        font-size: 1em;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+    /* Add spacing between buttons */
+    .form-group {
+        text-align: center;
+    }
+
+        .form-group a,
+        .form-group button {
+            margin: 5px;
+        }
+</style>

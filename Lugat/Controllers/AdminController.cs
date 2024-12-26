@@ -1,6 +1,11 @@
-﻿using Lugat.Brokers.Storages;
+﻿//--------------------------------------------------
+// Copyright (c) Coalition Of Good-Hearted Engineers
+// Free To Use To Find Comfort And Peace
+//--------------------------------------------------
+using Lugat.Brokers.Storages;
 using Lugat.Models.Foundations.Bolims;
 using Lugat.Models.Foundations.Categories;
+using Lugat.Models.Foundations.Words;
 using Lugat.Services.Foundations.Bolimlar;
 using Lugat.Services.Foundations.Categories;
 using Lugat.Services.Foundations.Words;
@@ -103,8 +108,6 @@ namespace Lugat.Controllers
 
             return View(category);
         }
-
-
 
         //Bolimlar
 
@@ -225,6 +228,55 @@ namespace Lugat.Controllers
                 ModelState.AddModelError(string.Empty, $"Xatolik yuz berdi: {ex.Message}");
                 return View(bolim);
             }
+        }
+
+        //--------------------------------------------------
+        // Copyright (c) Coalition Of Good-Hearted Engineers
+        // Free To Use To Find Comfort And Peace
+        //--------------------------------------------------
+
+        public async Task<IActionResult> WordPage(int id)
+        {
+            var bolim = await this.bolimService.RetrieveBolimByIdAsync(id);
+            if (bolim == null)
+            {
+                return NotFound();
+            }
+
+            var bolimlar = await storageBroker.GetWordsBolimlarByIdAsync(id);
+
+            ViewBag.BolimName = bolim.Name;
+            return View(bolimlar);
+        }
+
+        public async Task<IActionResult> AddWord(int id)
+        {
+            var bolim = await this.bolimService.RetrieveBolimByIdAsync(id);
+
+            if (bolim == null)
+            {
+                return NotFound();
+            }
+
+            var word = new Word
+            {
+                BolimId = bolim.Id
+            };
+            return View(word);
+        }
+        
+
+              [HttpPost]
+        public async ValueTask<IActionResult> CreateWord(Word word)
+        {
+            if (ModelState.IsValid)
+            {
+                await this.wordService.AddWordAsync(word);
+
+                return RedirectToAction("Index", new { id = word.BolimId });
+            }
+
+            return View("AddWord", word);
         }
     }
 }

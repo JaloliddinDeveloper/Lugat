@@ -2,6 +2,7 @@
 // Copyright (c) Coalition Of Good-Hearted Engineers
 // Free To Use To Find Comfort And Peace
 //--------------------------------------------------
+using Lugat.Models.Foundations.Bolims;
 using Lugat.Models.Foundations.Words;
 
 namespace Lugat.Brokers.Storages
@@ -13,5 +14,7 @@ namespace Lugat.Brokers.Storages
         ValueTask<Word> SelectWordByIdAsync(int WordId);
         ValueTask<Word> UpdateWordAsync(Word Word);
         ValueTask<Word> DeleteWordAsync(Word Word);
+
+        Task<IEnumerable<Word>> GetWordsBolimlarByIdAsync(int bolimId);
     }
 }
