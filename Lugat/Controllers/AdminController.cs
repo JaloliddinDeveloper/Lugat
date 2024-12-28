@@ -317,15 +317,15 @@ namespace Lugat.Controllers
             existingWord.Uzbek = word.Uzbek;
             existingWord.ExampleEng = word.ExampleEng;
             existingWord.ExampleUz = word.ExampleUz;
-            existingWord.WordPicture = word.WordPicture; 
+            existingWord.WordPicture = word.WordPicture;
             existingWord.BolimId = word.BolimId;
-
 
             await this.wordService.UpdateWordAsync(existingWord);
 
             TempData["Message"] = "Word updated successfully!";
-            return RedirectToAction("Index");
+            return RedirectToAction("WordPage", new { id = word.BolimId });
         }
+
 
 
 
