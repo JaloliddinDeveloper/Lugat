@@ -4,6 +4,7 @@
 
 @{
     ViewData["Title"] = "Categories List";
+    int serialNumber = 1; // Initialize the counter
 }
 
 <div class="container">
@@ -15,6 +16,7 @@
     <table class="table">
         <thead>
             <tr>
+                <th>#</th> <!-- Serial Number -->
                 <th>Id</th>
                 <th>Name</th>
                 <th>Star</th>
@@ -25,6 +27,7 @@
             @foreach (var category in Model)
             {
                 <tr>
+                    <td>@serialNumber</td> <!-- Display serial number -->
                     <td>@category.Id</td>
                     <td>@category.Name</td>
                     <td>@category.Star</td>
@@ -35,10 +38,12 @@
                         <a asp-controller="Admin" asp-action="Delete" asp-route-id="@category.Id" class="btn btn-danger">Delete</a>
                     </td>
                 </tr>
+                serialNumber++; // Increment the counter
             }
         </tbody>
     </table>
 </div>
+
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -46,9 +51,9 @@
         margin: 0;
         padding: 0;
     }
-    .bolimclass
-    {
-     background-color:green
+
+    .bolimclass {
+        background-color: green;
     }
 
     .container {
@@ -138,5 +143,4 @@
         .btn-danger:hover {
             background-color: #c82333;
         }
-
 </style>
