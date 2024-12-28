@@ -6,6 +6,7 @@ using Lugat.Brokers.Storages;
 using Lugat.Models.Foundations.Bolims;
 using Lugat.Models.Foundations.Categories;
 using Lugat.Models.Foundations.Words;
+using Lugat.Models.ViewModels;
 using Lugat.Services.Foundations.Bolimlar;
 using Lugat.Services.Foundations.Categories;
 using Lugat.Services.Foundations.Words;
@@ -238,15 +239,22 @@ namespace Lugat.Controllers
         public async Task<IActionResult> WordPage(int id)
         {
             var bolim = await this.bolimService.RetrieveBolimByIdAsync(id);
+
             if (bolim == null)
             {
                 return NotFound();
             }
 
-            var bolimlar = await storageBroker.GetWordsBolimlarByIdAsync(id);
+            var words = await storageBroker.GetWordsBolimlarByIdAsync(id);
 
-            ViewBag.BolimName = bolim.Name;
-            return View(bolimlar);
+            var viewModel = new WordPageViewModel
+            {
+                BolimId = bolim.Id,
+                BolimName = bolim.Name,
+                Words = words
+            };
+
+            return View(viewModel);
         }
 
         public async Task<IActionResult> AddWord(int id)
@@ -273,7 +281,7 @@ namespace Lugat.Controllers
             {
                 await this.wordService.AddWordAsync(word);
 
-                return RedirectToAction("Index", new { id = word.BolimId });
+                return RedirectToAction("WordPage", new { id = word.BolimId });
             }
 
             return View("AddWord", word);

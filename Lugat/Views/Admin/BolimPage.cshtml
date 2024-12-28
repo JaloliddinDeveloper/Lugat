@@ -119,6 +119,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th>Tartib raqam</th>
                     <th>ID</th>
                     <th>Bo'lim Nomi</th>
                     <th>Star</th>
@@ -126,20 +127,26 @@
                 </tr>
             </thead>
             <tbody>
+                @* Initialize a counter variable *@
+                @{
+                    int counter = 1;
+                }
                 @foreach (var bolim in Model)
                 {
                     <tr>
+                        <td>@counter</td> @* Tartib raqam *@
                         <td>@bolim.Id</td>
                         <td>@bolim.Name</td>
                         <td>@bolim.Star</td>
                         <td>
                             <a asp-controller="Admin" asp-action="WordPage" asp-route-id="@bolim.Id" class="btn btn-danger">WordPage</a>
-                            <a asp-controller="Admin" asp-action="AddWord" asp-route-id="@bolim.Id" class="btn btn-danger">AddWord</a>
+        @*                     <a asp-controller="Admin" asp-action="AddWord" asp-route-id="@bolim.Id" class="btn btn-danger">AddWord</a> *@
                             <a asp-controller="Admin" asp-action="UpdateBolim" asp-route-id="@bolim.Id" class="btn btn-warning">Tahrirlash</a>
                             <a asp-controller="Admin" asp-action="DeleteBolim" asp-route-id="@bolim.Id" class="btn btn-danger">O'chirish</a>
-
                         </td>
                     </tr>
+                    @* Increment the counter *@
+                    counter++;
                 }
             </tbody>
         </table>
