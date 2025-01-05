@@ -123,8 +123,13 @@ namespace Lugat.Controllers
             var bolimlar = await storageBroker.GetBolimlarByCategoryIdAsync(id);
 
 
-            ViewBag.CategoryName = category.Name;
-            return View(bolimlar);
+            var viewModel = new BolimPageViewModel
+            {
+                CategoryId = category.Id,
+                CategoryName = category.Name,
+                Bolims = bolimlar
+            };
+            return View(viewModel);
         }
 
         public async ValueTask<IActionResult> AddBolim(int id)
@@ -153,7 +158,7 @@ namespace Lugat.Controllers
             {
               await this.bolimService.AddBolimAsync(bolim);
 
-                return RedirectToAction("Index", new { id = bolim.CategoryId });
+                return RedirectToAction("BolimPage", new { id = bolim.CategoryId });
             }
 
             return View("AddBolim", bolim);
