@@ -3,13 +3,13 @@
 @model Word
 
 @{
-    ViewData["Title"] = "Add New Word";
+    ViewData["Title"] = "Yangi so'z qo'shish";
 }
 
 <div class="container">
     <h2>So'z qo'shish</h2>
 
-    <form asp-action="CreateWord" method="post">
+    <form asp-action="CreateWord" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="English">English Word</label>
             <input type="text" class="form-control" id="English" name="English" required />
@@ -26,9 +26,10 @@
         </div>
 
         <div class="form-group">
-            <label for="WordPicture">Word Picture</label>
-            <input type="text" class="form-control" id="WordPicture" name="WordPicture" />
+            <label for="WordPicture">So'z Rasmi </label>
+            <input type="file" class="form-control" id="WordPicture" name="wordPicture" />
         </div>
+
 
         <div class="form-group">
             <label for="ExampleEng">Example in English</label>
@@ -47,6 +48,7 @@
             <a asp-action="BolimPage" asp-route-id="@Model.BolimId" class="btn btn-secondary">Bekor qilish</a>
         </div>
     </form>
+
 </div>
 
 <style>

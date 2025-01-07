@@ -4,7 +4,7 @@
 }
 
 <div class="toolbar">
-    <button class="toolbar-heading">Alifbo</button>
+    <button class="toolbar-heading">@Model.BolimName</button>
     <div class="toolbar-buttons">
         <a href="@Url.Action("AddWord", "Admin", new { id = Model.BolimId })" class="btn-add-words">
             <span class="icon">+</span> Add Words
@@ -201,12 +201,12 @@ else
     }
 
     .image-container {
-        text-align: center;
+        text-align: left;
         margin-top: 15px;
     }
 
         .image-container img {
-            max-width: 100%;
+            max-width: 200px;
             height: auto;
             border-radius: 5px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

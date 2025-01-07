@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lugat.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    [Migration("20241226132951_CreateAllTablesInitialize")]
+    [Migration("20250107124830_CreateAllTablesInitialize")]
     partial class CreateAllTablesInitialize
     {
         /// <inheritdoc />

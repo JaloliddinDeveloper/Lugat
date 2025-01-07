@@ -126,12 +126,12 @@
     }
 
     .image-container {
-        text-align: center;
+        text-align: left;
         margin-top: 15px;
     }
 
         .image-container img {
-            max-width: 100%;
+            max-width: 200px;
             height: auto;
             border-radius: 5px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -205,6 +205,37 @@
         .back-btn:hover {
             background-color: #5a6268;
         }
+
+    .toolbar {
+        position: sticky;
+        top: 0;
+        background-color: #fff; /* Adjust as needed */
+        z-index: 1000; /* Ensures it stays above other elements */
+        padding: 10px; /* Adjust padding as needed */
+        border-bottom: 1px solid #ddd; /* Optional: adds a border at the bottom */
+    }
+
+    .toolbar-heading {
+        font-size: 18px; /* Adjust font size as needed */
+        font-weight: bold;
+    }
+
+    .toolbar-buttons {
+        display: flex;
+        gap: 10px; /* Space between buttons */
+    }
+
+    .btn-add-bolim, .back-btn {
+        text-decoration: none;
+        padding: 5px 10px;
+       
+        color: #fff; /* Button text color */
+        border-radius: 5px;
+    }
+
+        .btn-add-bolim .icon {
+            margin-right: 5px;
+        }
 </style>
 
 <div class="toolbar">
@@ -219,13 +250,13 @@
 
 <div class="card-container">
     @{
-        int counter = 1; // Initialize the counter
+        int counter = 1; 
     }
     @foreach (var bolim in Model.Bolims)
     {
         <div class="bolim-card">
             <div class="bolim-header">
-                <h3>@counter. @bolim.Name</h3> <!-- Display the counter -->
+                <h3>@counter. @bolim.Name</h3> 
                 <div class="card-actions">
                     <a asp-controller="Admin" asp-action="WordPage" asp-route-id="@bolim.Id" class="btn btn-danger">WordPage</a>
                     <a asp-controller="Admin" asp-action="UpdateBolim" asp-route-id="@bolim.Id" class="btn btn-edit">Tahrirlash</a>
