@@ -10,28 +10,32 @@ using Lugat.Models.ViewModels;
 using Lugat.Services.Foundations.Bolimlar;
 using Lugat.Services.Foundations.Categories;
 using Lugat.Services.Foundations.Words;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lugat.Controllers
 {
-    public  class AdminController : Controller
+    public class AdminController : Controller
     {
         private readonly IStorageBroker storageBroker;
         private readonly ICategoryService categoryService;
         private readonly IBolimService bolimService;
         private readonly IWordService wordService;
+        private readonly IWebHostEnvironment webHostEnvironment;
 
         public AdminController(
             IStorageBroker storageBroker,
             ICategoryService categoryService,
             IBolimService bolimService,
-            IWordService wordService)
+            IWordService wordService,
+            IWebHostEnvironment webHostEnvironment)
         {
             this.storageBroker = storageBroker;
             this.categoryService = categoryService;
             this.bolimService = bolimService;
             this.wordService = wordService;
+            this.webHostEnvironment = webHostEnvironment;
         }
 
         public async ValueTask<IActionResult> Index()
@@ -134,35 +138,51 @@ namespace Lugat.Controllers
 
         public async ValueTask<IActionResult> AddBolim(int id)
         {
-          
+
             var category = await this.categoryService.RetrieveCategoryByIdAsync(id);
             if (category == null)
             {
-                return NotFound(); 
+                return NotFound();
             }
 
-           
+
             var bolim = new Bolim
             {
                 CategoryId = category.Id
             };
 
-            return View(bolim); 
+            return View(bolim);
         }
 
 
         [HttpPost]
-        public async ValueTask<IActionResult> CreateBolim(Bolim bolim)
+        public async ValueTask<IActionResult> CreateBolim(Bolim bolim, IFormFile sectionPicture)
         {
-            if (ModelState.IsValid)
+            if (true)
             {
-              await this.bolimService.AddBolimAsync(bolim);
+                // Handle file upload logic
+                if (sectionPicture != null && sectionPicture.Length > 0)
+                {
+                    string uploadsFolder = Path.Combine(this.webHostEnvironment.WebRootPath, "images");
+                    string uniqueFileName = $"{Guid.NewGuid()}_{sectionPicture.FileName}";
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await sectionPicture.CopyToAsync(fileStream);
+                    }
+
+                    bolim.SectionPicture = "/images/" + uniqueFileName;
+                }
+
+                await this.bolimService.AddBolimAsync(bolim);
 
                 return RedirectToAction("BolimPage", new { id = bolim.CategoryId });
             }
 
             return View("AddBolim", bolim);
         }
+
 
         public async Task<IActionResult> DeleteBolim(int id)
         {
@@ -173,7 +193,7 @@ namespace Lugat.Controllers
                 return NotFound();
             }
 
-            return View(bolim); 
+            return View(bolim);
         }
 
         [HttpPost, ActionName("DeleteBolim")]
@@ -183,12 +203,12 @@ namespace Lugat.Controllers
 
             if (bolim == null)
             {
-                return NotFound(); 
+                return NotFound();
             }
 
-            await this.bolimService.RemoveBolimByIdAsync(id); 
+            await this.bolimService.RemoveBolimByIdAsync(id);
 
-            return RedirectToAction(nameof(Index)); 
+            return RedirectToAction("BolimPage", new { id = bolim.CategoryId });
         }
 
         public async Task<IActionResult> UpdateBolim(int id)
@@ -277,31 +297,34 @@ namespace Lugat.Controllers
             };
             return View(word);
         }
-        
 
-              [HttpPost]
-        public async ValueTask<IActionResult> CreateWord(Word word)
+
+        [HttpPost]
+        public async Task<IActionResult> CreateWord(Word word, IFormFile wordPicture)
         {
-            if (ModelState.IsValid)
+            if (true)
             {
-                await this.wordService.AddWordAsync(word);
+                if (wordPicture != null && wordPicture.Length > 0)
+                {
+                    string uploadsFolder = Path.Combine(this.webHostEnvironment.WebRootPath, "images");
+                    string uniqueFileName = $"{Guid.NewGuid()}_{wordPicture.FileName}";
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await wordPicture.CopyToAsync(fileStream);
+                    }
+
+                    word.WordPicture = "/images/" + uniqueFileName;
+                }
+
+                await this.wordService.AddWordAsync(word);
                 return RedirectToAction("WordPage", new { id = word.BolimId });
             }
 
             return View("AddWord", word);
         }
 
-        public async Task<IActionResult> UpdateWord(int id)
-        {
-            var word = await this.wordService.RetrieveWordByIdAsync(id);
-            if (word == null)
-            {
-                return NotFound();
-            }
-
-            return View(word);
-        }
 
         [HttpPost]
         public async Task<IActionResult> UpdateWord(Word word)
@@ -342,7 +365,7 @@ namespace Lugat.Controllers
                 return NotFound();
             }
 
-            return View(word); 
+            return View(word);
         }
 
         [HttpPost, ActionName("DeleteWord")]
@@ -354,8 +377,8 @@ namespace Lugat.Controllers
                 return NotFound();
             }
 
-          await this.wordService.RemoveWordByIdAsync(word.Id);
-            return RedirectToAction("Index"); // Redirect to your list view
+            await this.wordService.RemoveWordByIdAsync(word.Id);
+            return RedirectToAction("WordPage", new { id = word.BolimId });
         }
     }
 }
