@@ -10,9 +10,8 @@
         @TempData["Message"]
     </div>
 }
-
 <div class="form-container">
-    <form asp-action="UpdateWord" asp-controller="Admin" method="post">
+    <form asp-action="UpdateWord" asp-controller="Admin" method="post" enctype="multipart/form-data">
         <input type="hidden" asp-for="Id" />
 
         <div class="form-group-modern">
@@ -46,8 +45,15 @@
         </div>
 
         <div class="form-group-modern">
-            <label asp-for="WordPicture">Word Picture (URL or Path)</label>
-            <input asp-for="WordPicture" class="form-control-modern" />
+            <label asp-for="WordPicture">Word Picture (Upload Image)</label>
+            @if (!string.IsNullOrEmpty(Model.WordPicture))
+            {
+                <div>
+                    <img src="@Model.WordPicture" alt="Word Picture" width="100" height="100" />
+                    <p>Current Image</p>
+                </div>
+            }
+            <input asp-for="WordPicture" type="file" class="form-control-modern" />
             <span asp-validation-for="WordPicture" class="text-danger"></span>
         </div>
 
@@ -63,6 +69,7 @@
         </div>
     </form>
 </div>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
