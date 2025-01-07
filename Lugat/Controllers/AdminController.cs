@@ -10,7 +10,6 @@ using Lugat.Models.ViewModels;
 using Lugat.Services.Foundations.Bolimlar;
 using Lugat.Services.Foundations.Categories;
 using Lugat.Services.Foundations.Words;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -325,19 +324,62 @@ namespace Lugat.Controllers
             return View("AddWord", word);
         }
 
+        public async Task<IActionResult> UpdateWord(int id)
+        {
+            var word = await this.wordService.RetrieveWordByIdAsync(id);
+
+            if (word == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["BolimId"] = word.BolimId;
+
+            return View(word);
+        }
+
 
         [HttpPost]
-        public async Task<IActionResult> UpdateWord(Word word)
+        public async Task<IActionResult> UpdateWord(Word word, IFormFile WordPicture)
         {
-            if (!ModelState.IsValid)
+            if (word == null)
             {
-                return View(word);
+                return BadRequest("Noto'g'ri so'z ma'lumotlari.");
+            }
+
+            if (WordPicture != null && WordPicture.Length > 0)
+            {
+                var fileName = Path.GetFileNameWithoutExtension(WordPicture.FileName) +
+                                "_" + Guid.NewGuid().ToString() + Path.GetExtension(WordPicture.FileName);
+
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+
+                var directoryPath = Path.GetDirectoryName(filePath);
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await WordPicture.CopyToAsync(stream);
+                }
+
+                word.WordPicture = "/images/" + fileName;
+            }
+            else if (string.IsNullOrEmpty(word.WordPicture))
+            {
+                var existingWordw = await this.wordService.RetrieveWordByIdAsync(word.Id);
+                if (existingWordw != null)
+                {
+                    word.WordPicture = existingWordw.WordPicture;
+                }
             }
 
             var existingWord = await this.wordService.RetrieveWordByIdAsync(word.Id);
             if (existingWord == null)
             {
-                return NotFound();
+                return NotFound("So'z topilmadi.");
             }
 
             existingWord.English = word.English;
@@ -348,14 +390,18 @@ namespace Lugat.Controllers
             existingWord.WordPicture = word.WordPicture;
             existingWord.BolimId = word.BolimId;
 
-            await this.wordService.UpdateWordAsync(existingWord);
+            try
+            {
+                await this.wordService.UpdateWordAsync(existingWord);
+                TempData["Message"] = "So'z muvaffaqiyatli yangilandi!";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "So'zni yangilashda xato yuz berdi.";
+            }
 
-            TempData["Message"] = "Word updated successfully!";
             return RedirectToAction("WordPage", new { id = word.BolimId });
         }
-
-
-
 
         public async Task<IActionResult> DeleteWord(int id)
         {
