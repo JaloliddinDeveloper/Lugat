@@ -18,10 +18,10 @@ namespace Lugat.Brokers.Storages
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string connection = 
+            string connectionString =
                 this.configuration.GetConnectionString("DefaultConnection");
 
-            optionsBuilder.UseSqlServer(connection);
+            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
         }
 
         private async ValueTask<T> InsertAsync<T>(T @object)
