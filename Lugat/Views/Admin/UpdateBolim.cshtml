@@ -6,41 +6,56 @@
     ViewData["Title"] = "Update Bolim";
 }
 
-<h2 class="form-title">Update Bolim</h2>
+<h2>Bo'limni yangilash</h2>
 
-<form asp-action="UpdateBolim" method="post" class="form-container">
-    <input type="hidden" name="Id" value="@Model.Id" />
+@{
+    ViewData["Title"] = "Edit Bolim";
+}
 
+<h1>Edit Bolim</h1>
+<form asp-action="UpdateBolim" enctype="multipart/form-data">
     <div class="form-group">
-        <label for="Name" class="form-label">Bo'lim Nomi</label>
-        <input type="text" class="form-control" id="Name" name="Name" value="@Model.Name" required />
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="SectionPicture" class="control-label"></label>
+
+        <!-- Rasmni ko'rsatish -->
+        <div>
+            <img src="@Model.SectionPicture" alt="Current Picture" style="max-width:200px; max-height:200px;" />
+        </div>
+
+        <!-- Fayl yuklash uchun input -->
+        <input asp-for="SectionPicture" type="file" class="form-control" />
+        <span asp-validation-for="SectionPicture" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Star" class="control-label"></label>
+        <input asp-for="Star" class="form-control" />
+        <span asp-validation-for="Star" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CategoryId" class="control-label" style="display:none;"></label>
+        <input asp-for="CategoryId" type="hidden" />
+        <span asp-validation-for="CategoryId" class="text-danger" style="display:none;"></span>
     </div>
 
     <div class="form-group">
-        <label for="SectionPicture" class="form-label">Rasm</label>
-        <input type="text" class="form-control" id="SectionPicture" name="SectionPicture" value="@Model.SectionPicture" required />
-    </div>
-
-    <div class="form-group">
-        <label for="Star" class="form-label">Yulduz</label>
-        <input type="number" class="form-control" id="Star" name="Star" value="@Model.Star" required />
-    </div>
-
-    <div class="form-group">
-        <label for="CategoryId" class="form-label">Kategoriya</label>
-        <select class="form-control" id="CategoryId" name="CategoryId">
-            <option value="">Kategoriyani tanlang</option>
-            <option value="@ViewData["CategoryId"]" selected>
-                @ViewData["CategoryId"]
-            </option>
-        </select>
-    </div>
-
-    <div class="form-actions">
-        <button type="submit" class="btn btn-submit">Yangilash</button>
-        <a asp-action="Index" class="btn btn-cancel">Bekor qilish</a>
+        <input type="submit" value="Save" class="btn btn-primary" />
     </div>
 </form>
+
+<div>
+    <a asp-action="Index">Bosh sahifaga</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
 
 <style>
     body {

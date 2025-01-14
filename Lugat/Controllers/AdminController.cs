@@ -210,50 +210,85 @@ namespace Lugat.Controllers
             return RedirectToAction("BolimPage", new { id = bolim.CategoryId });
         }
 
+
+        //22
         public async Task<IActionResult> UpdateBolim(int id)
         {
-            var bolim = await this.bolimService.RetrieveBolimByIdAsync(id);
+            var section = await this.bolimService.RetrieveBolimByIdAsync(id);
 
-            if (bolim == null)
+            if (section == null)
             {
                 return NotFound();
             }
 
-            ViewData["CategoryId"] = bolim.CategoryId;
+            ViewData["CategoryId"] = section.CategoryId;
 
-            return View(bolim);
+            return View(section);
         }
 
+
         [HttpPost]
-        public async Task<IActionResult> UpdateBolim(Bolim bolim)
+        public async Task<IActionResult> UpdateBolim(Bolim bolim, IFormFile SectionPicture)
         {
-            if (!ModelState.IsValid)
+            if (bolim == null)
             {
-                return View(bolim);
+                return BadRequest("Noto'g'ri so'z ma'lumotlari.");
             }
+
+            if (SectionPicture != null && SectionPicture.Length > 0)
+            {
+                var fileName = Path.GetFileNameWithoutExtension(SectionPicture.FileName) +
+                                "_" + Guid.NewGuid().ToString() + Path.GetExtension(SectionPicture.FileName);
+
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+
+                var directoryPath = Path.GetDirectoryName(filePath);
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await SectionPicture.CopyToAsync(stream);
+                }
+
+                bolim.SectionPicture = "/images/" + fileName;
+            }
+            else if (string.IsNullOrEmpty(bolim.SectionPicture))
+            {
+                var existingBolimw = await this.bolimService.RetrieveBolimByIdAsync(bolim.Id);
+                if (existingBolimw != null)
+                {
+                    bolim.SectionPicture = existingBolimw.SectionPicture;
+                }
+            }
+
+            var existingWord = await this.bolimService.RetrieveBolimByIdAsync(bolim.Id);
+            if (existingWord == null)
+            {
+                return NotFound("So'z topilmadi.");
+            }
+
+            existingWord.Name = bolim.Name;
+            existingWord.SectionPicture = bolim.SectionPicture;
+            existingWord.Star = bolim.Star;
+            existingWord.CategoryId = bolim.CategoryId;
+
 
             try
             {
-                var existingBolim = await this.bolimService.RetrieveBolimByIdAsync(bolim.Id);
-                if (existingBolim == null)
-                {
-                    return NotFound();
-                }
-
-                existingBolim.Name = bolim.Name;
-                existingBolim.SectionPicture = bolim.SectionPicture;
-                existingBolim.Star = bolim.Star;
-                existingBolim.CategoryId = bolim.CategoryId;
-
-                await this.bolimService.UpdateBolimAsync(existingBolim);
-                return RedirectToAction(nameof(Index));
+                await this.bolimService.UpdateBolimAsync(existingWord);
+                TempData["Message"] = "So'z muvaffaqiyatli yangilandi!";
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, $"Xatolik yuz berdi: {ex.Message}");
-                return View(bolim);
+                TempData["Error"] = "So'zni yangilashda xato yuz berdi.";
             }
+
+            return RedirectToAction("BolimPage", new { id = bolim.CategoryId });
         }
+        
 
         //--------------------------------------------------
         // Copyright (c) Coalition Of Good-Hearted Engineers
