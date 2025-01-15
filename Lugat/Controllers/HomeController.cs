@@ -15,7 +15,7 @@ namespace Lugat.Controllers
         [HttpPost]
         public IActionResult Index(string username, string password)
         {
-            if (username == "Javohir" && password == "Javohir")
+            if (username == "Javohir" && password == "Javohir_1402")
             {
                 return RedirectToAction("Index", "Admin");
             }
