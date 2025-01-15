@@ -21,7 +21,7 @@ namespace Lugat.Brokers.Storages
             string connectionString =
                 this.configuration.GetConnectionString("DefaultConnection");
 
-            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+            optionsBuilder.UseSqlite(connectionString);
         }
 
         private async ValueTask<T> InsertAsync<T>(T @object)
