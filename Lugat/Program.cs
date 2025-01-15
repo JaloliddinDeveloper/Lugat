@@ -9,7 +9,7 @@ using Lugat.Services.Foundations.Words;
 using Lugat.Services.Orchestrations.BolimsWords;
 using Lugat.Services.Orchestrations.CategorySections;
 
-internal class Program
+public class Program
 {
     private static void Main(string[] args)
     {
@@ -27,8 +27,8 @@ internal class Program
             pattern: "{controller=Home}/{action=Index}/{id?}");
 
         app.Run();
-        
     }
+
     private static void BrokersMethod(WebApplicationBuilder builder)
     {
         builder.Services.AddTransient<IStorageBroker, StorageBroker>();
