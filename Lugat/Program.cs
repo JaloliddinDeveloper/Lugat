@@ -8,12 +8,18 @@ using Lugat.Services.Foundations.Categories;
 using Lugat.Services.Foundations.Words;
 using Lugat.Services.Orchestrations.BolimsWords;
 using Lugat.Services.Orchestrations.CategorySections;
+using System.Net;
 
 public class Program
 {
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.WebHost.ConfigureKestrel(options =>
+        {
+            options.Listen(IPAddress.Any, 5001);  // Portni 5001 ga o'rnatish
+        });
 
         builder.Services.AddControllersWithViews();
         BrokersMethod(builder);
@@ -24,7 +30,7 @@ public class Program
         app.UseStaticFiles();
 
         app.MapControllerRoute(name: "def",
-            pattern: "{controller=Home}/{action=Index}/{id?}");
+            pattern: "{controller=Admin}/{action=Index}/{id?}");
 
         app.Run();
     }
