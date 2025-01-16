@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lugat.Brokers.Storages
 {
-    public partial class StorageBroker:DbContext, IStorageBroker
+    public partial class StorageBroker : DbContext, IStorageBroker
     {
         private readonly IConfiguration configuration;
 
@@ -18,10 +18,12 @@ namespace Lugat.Brokers.Storages
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string connectionString =
+
+            string connection =
                 this.configuration.GetConnectionString("DefaultConnection");
 
-            optionsBuilder.UseSqlite(connectionString);
+            optionsBuilder.UseMySql(connection,
+                ServerVersion.AutoDetect(connection));
         }
 
         private async ValueTask<T> InsertAsync<T>(T @object)
