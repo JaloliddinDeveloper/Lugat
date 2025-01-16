@@ -18,7 +18,7 @@ public class Program
 
         builder.WebHost.ConfigureKestrel(options =>
         {
-            options.Listen(IPAddress.Any, 5001);  // Portni 5001 ga o'rnatish
+            options.Listen(IPAddress.Any, 5001);  
         });
 
         builder.Services.AddControllersWithViews();
@@ -26,6 +26,8 @@ public class Program
         FoundationsMethod(builder);
         OrchestrationsMethod(builder);
         var app = builder.Build();
+
+        app.UsePathBase("/lugat");
 
         app.UseStaticFiles();
 
