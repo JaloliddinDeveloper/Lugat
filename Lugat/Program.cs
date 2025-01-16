@@ -27,8 +27,6 @@ public class Program
         OrchestrationsMethod(builder);
         var app = builder.Build();
 
-        app.UsePathBase("/lugat");
-
         app.UseStaticFiles();
 
         app.MapControllerRoute(name: "def",
