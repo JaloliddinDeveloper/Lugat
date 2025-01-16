@@ -16,11 +16,6 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.WebHost.ConfigureKestrel(options =>
-        {
-            options.Listen(IPAddress.Any, 5001);  
-        });
-
         builder.Services.AddControllersWithViews();
         BrokersMethod(builder);
         FoundationsMethod(builder);
