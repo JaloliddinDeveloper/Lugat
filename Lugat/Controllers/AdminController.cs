@@ -11,7 +11,6 @@ using Lugat.Services.Foundations.Bolimlar;
 using Lugat.Services.Foundations.Categories;
 using Lugat.Services.Foundations.Words;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Lugat.Controllers
 {
@@ -21,20 +20,18 @@ namespace Lugat.Controllers
         private readonly ICategoryService categoryService;
         private readonly IBolimService bolimService;
         private readonly IWordService wordService;
-        private readonly IWebHostEnvironment webHostEnvironment;
+        private readonly string uploadsFolder = "/var/www/pictures";
 
         public AdminController(
             IStorageBroker storageBroker,
             ICategoryService categoryService,
             IBolimService bolimService,
-            IWordService wordService,
-            IWebHostEnvironment webHostEnvironment)
+            IWordService wordService)
         {
             this.storageBroker = storageBroker;
             this.categoryService = categoryService;
             this.bolimService = bolimService;
             this.wordService = wordService;
-            this.webHostEnvironment = webHostEnvironment;
         }
 
         public async ValueTask<IActionResult> Index()
@@ -157,30 +154,31 @@ namespace Lugat.Controllers
         [HttpPost]
         public async ValueTask<IActionResult> CreateBolim(Bolim bolim, IFormFile sectionPicture)
         {
-            if (true)
+            if (sectionPicture != null && sectionPicture.Length > 0)
             {
-                // Handle file upload logic
-                if (sectionPicture != null && sectionPicture.Length > 0)
+                // uploadsFolder bu yerda sinf darajasida aniqlangan
+                string uniqueFileName = $"{Guid.NewGuid()}_{sectionPicture.FileName}";
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName); // Faylni "/var/www/pictures"ga saqlaymiz
+
+                var directoryPath = Path.GetDirectoryName(filePath);
+                if (!Directory.Exists(directoryPath))
                 {
-                    string uploadsFolder = Path.Combine(this.webHostEnvironment.WebRootPath, "images");
-                    string uniqueFileName = $"{Guid.NewGuid()}_{sectionPicture.FileName}";
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await sectionPicture.CopyToAsync(fileStream);
-                    }
-
-                    bolim.SectionPicture = "/images/" + uniqueFileName;
+                    Directory.CreateDirectory(directoryPath);  // Agar papka mavjud bo'lmasa, yaratamiz
                 }
 
-                await this.bolimService.AddBolimAsync(bolim);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await sectionPicture.CopyToAsync(fileStream);  // Faylni serverga yuklash
+                }
 
-                return RedirectToAction("BolimPage", new { id = bolim.CategoryId });
+                bolim.SectionPicture = $"/pictures/{uniqueFileName}";  // Fayl manzilini saqlash
             }
 
-            return View("AddBolim", bolim);
+            await this.bolimService.AddBolimAsync(bolim);  // Bolimni qo'shish
+            return RedirectToAction("BolimPage", new { id = bolim.CategoryId });
         }
+
+
 
 
         public async Task<IActionResult> DeleteBolim(int id)
@@ -232,15 +230,15 @@ namespace Lugat.Controllers
         {
             if (bolim == null)
             {
-                return BadRequest("Noto'g'ri so'z ma'lumotlari.");
+                return BadRequest("Noto'g'ri bo'lim ma'lumotlari.");
             }
 
             if (SectionPicture != null && SectionPicture.Length > 0)
             {
                 var fileName = Path.GetFileNameWithoutExtension(SectionPicture.FileName) +
-                                "_" + Guid.NewGuid().ToString() + Path.GetExtension(SectionPicture.FileName);
+                               "_" + Guid.NewGuid().ToString() + Path.GetExtension(SectionPicture.FileName);
 
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+                var filePath = Path.Combine(uploadsFolder, fileName);
 
                 var directoryPath = Path.GetDirectoryName(filePath);
                 if (!Directory.Exists(directoryPath))
@@ -253,42 +251,41 @@ namespace Lugat.Controllers
                     await SectionPicture.CopyToAsync(stream);
                 }
 
-                bolim.SectionPicture = "/images/" + fileName;
+                bolim.SectionPicture = $"/pictures/{fileName}";
             }
             else if (string.IsNullOrEmpty(bolim.SectionPicture))
             {
-                var existingBolimw = await this.bolimService.RetrieveBolimByIdAsync(bolim.Id);
-                if (existingBolimw != null)
+                var existingBolim = await this.bolimService.RetrieveBolimByIdAsync(bolim.Id);
+                if (existingBolim != null)
                 {
-                    bolim.SectionPicture = existingBolimw.SectionPicture;
+                    bolim.SectionPicture = existingBolim.SectionPicture;
                 }
             }
 
-            var existingWord = await this.bolimService.RetrieveBolimByIdAsync(bolim.Id);
-            if (existingWord == null)
+            var existingBolimToUpdate = await this.bolimService.RetrieveBolimByIdAsync(bolim.Id);
+            if (existingBolimToUpdate == null)
             {
-                return NotFound("So'z topilmadi.");
+                return NotFound("Bo'lim topilmadi.");
             }
 
-            existingWord.Name = bolim.Name;
-            existingWord.SectionPicture = bolim.SectionPicture;
-            existingWord.Star = bolim.Star;
-            existingWord.CategoryId = bolim.CategoryId;
-
+            existingBolimToUpdate.Name = bolim.Name;
+            existingBolimToUpdate.SectionPicture = bolim.SectionPicture;
+            existingBolimToUpdate.Star = bolim.Star;
+            existingBolimToUpdate.CategoryId = bolim.CategoryId;
 
             try
             {
-                await this.bolimService.UpdateBolimAsync(existingWord);
-                TempData["Message"] = "So'z muvaffaqiyatli yangilandi!";
+                await this.bolimService.UpdateBolimAsync(existingBolimToUpdate);
+                TempData["Message"] = "Bo'lim muvaffaqiyatli yangilandi!";
             }
             catch (Exception ex)
             {
-                TempData["Error"] = "So'zni yangilashda xato yuz berdi.";
+                TempData["Error"] = "Bo'limni yangilashda xato yuz berdi.";
             }
 
             return RedirectToAction("BolimPage", new { id = bolim.CategoryId });
         }
-        
+
 
         //--------------------------------------------------
         // Copyright (c) Coalition Of Good-Hearted Engineers
@@ -332,31 +329,25 @@ namespace Lugat.Controllers
             return View(word);
         }
 
-
         [HttpPost]
         public async Task<IActionResult> CreateWord(Word word, IFormFile wordPicture)
         {
-            if (true)
+            if (wordPicture != null && wordPicture.Length > 0)
             {
-                if (wordPicture != null && wordPicture.Length > 0)
+                var uniqueFileName = $"{Guid.NewGuid()}_{wordPicture.FileName}";
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
-                    string uploadsFolder = Path.Combine(this.webHostEnvironment.WebRootPath, "images");
-                    string uniqueFileName = $"{Guid.NewGuid()}_{wordPicture.FileName}";
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await wordPicture.CopyToAsync(fileStream);
-                    }
-
-                    word.WordPicture = "/images/" + uniqueFileName;
+                    await wordPicture.CopyToAsync(fileStream);
                 }
 
-                await this.wordService.AddWordAsync(word);
-                return RedirectToAction("WordPage", new { id = word.BolimId });
+                word.WordPicture = $"/pictures/{uniqueFileName}";
             }
 
-            return View("AddWord", word);
+            await this.wordService.AddWordAsync(word);
+
+            return RedirectToAction("WordPage", new { id = word.BolimId });
         }
 
         public async Task<IActionResult> UpdateWord(int id)
@@ -385,9 +376,9 @@ namespace Lugat.Controllers
             if (WordPicture != null && WordPicture.Length > 0)
             {
                 var fileName = Path.GetFileNameWithoutExtension(WordPicture.FileName) +
-                                "_" + Guid.NewGuid().ToString() + Path.GetExtension(WordPicture.FileName);
+                               "_" + Guid.NewGuid().ToString() + Path.GetExtension(WordPicture.FileName);
 
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+                var filePath = Path.Combine(uploadsFolder, fileName);
 
                 var directoryPath = Path.GetDirectoryName(filePath);
                 if (!Directory.Exists(directoryPath))
@@ -400,34 +391,34 @@ namespace Lugat.Controllers
                     await WordPicture.CopyToAsync(stream);
                 }
 
-                word.WordPicture = "/images/" + fileName;
+                word.WordPicture = $"/pictures/{fileName}";
             }
             else if (string.IsNullOrEmpty(word.WordPicture))
             {
-                var existingWordw = await this.wordService.RetrieveWordByIdAsync(word.Id);
-                if (existingWordw != null)
+                var existingWord = await this.wordService.RetrieveWordByIdAsync(word.Id);
+                if (existingWord != null)
                 {
-                    word.WordPicture = existingWordw.WordPicture;
+                    word.WordPicture = existingWord.WordPicture;
                 }
             }
 
-            var existingWord = await this.wordService.RetrieveWordByIdAsync(word.Id);
-            if (existingWord == null)
+            var existingWordToUpdate = await this.wordService.RetrieveWordByIdAsync(word.Id);
+            if (existingWordToUpdate == null)
             {
                 return NotFound("So'z topilmadi.");
             }
 
-            existingWord.English = word.English;
-            existingWord.EnglishTrans = word.EnglishTrans;
-            existingWord.Uzbek = word.Uzbek;
-            existingWord.ExampleEng = word.ExampleEng;
-            existingWord.ExampleUz = word.ExampleUz;
-            existingWord.WordPicture = word.WordPicture;
-            existingWord.BolimId = word.BolimId;
+            existingWordToUpdate.English = word.English;
+            existingWordToUpdate.EnglishTrans = word.EnglishTrans;
+            existingWordToUpdate.Uzbek = word.Uzbek;
+            existingWordToUpdate.ExampleEng = word.ExampleEng;
+            existingWordToUpdate.ExampleUz = word.ExampleUz;
+            existingWordToUpdate.WordPicture = word.WordPicture;
+            existingWordToUpdate.BolimId = word.BolimId;
 
             try
             {
-                await this.wordService.UpdateWordAsync(existingWord);
+                await this.wordService.UpdateWordAsync(existingWordToUpdate);
                 TempData["Message"] = "So'z muvaffaqiyatli yangilandi!";
             }
             catch (Exception ex)
@@ -437,6 +428,7 @@ namespace Lugat.Controllers
 
             return RedirectToAction("WordPage", new { id = word.BolimId });
         }
+
 
         public async Task<IActionResult> DeleteWord(int id)
         {
